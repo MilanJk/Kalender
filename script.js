@@ -12,10 +12,15 @@ class CalendarManager {
 
     addEvent() {
         const eventTitle = document.getElementById("eventTitle").value.trim();
-        if (eventTitle) {
-            const newEvent = { title: eventTitle, start: new Date().toISOString().split("T")[0] };
+        const eventDate = document.getElementById("eventDate").value; // Stelle sicher, dass du ein Datum wählst
+        if (eventTitle && eventDate) {
+            const newEvent = { title: eventTitle, start: eventDate };
             this.calendar.addEvent(newEvent);
             this.saveEvents();
+            document.getElementById("eventTitle").value = ""; // Leere das Eingabefeld
+            document.getElementById("eventDate").value = ""; // Leere das Datumsfeld
+        } else {
+            alert("Bitte Titel und Datum eingeben!");
         }
     }
 
@@ -29,28 +34,8 @@ class CalendarManager {
         localStorage.setItem("events", JSON.stringify(events));
     }
 
-    async loginWebUntis() {
-        const school = prompt("Bitte den Schulnamen eingeben:");
-        const username = prompt("Benutzername eingeben:");
-        const password = prompt("Passwort eingeben:");
-
-        if (school && username && password) {
-            const response = await fetch("https://webuntis-api.example.com/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ school, username, password })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                this.importWebUntis(data.icsUrl);
-            } else {
-                alert("Login fehlgeschlagen. Bitte überprüfe deine Eingaben.");
-            }
-        }
-    }
-
-    async importWebUntis(url) {
+    async importWebUntis() {
+        const url = prompt("Bitte die WebUntis ICS-URL eingeben:");
         if (url) {
             const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
             const data = await response.json();
@@ -62,9 +47,9 @@ class CalendarManager {
         const events = [];
         icsData.split("BEGIN:VEVENT").slice(1).forEach(entry => {
             const title = entry.match(/SUMMARY:(.+)/)?.[1] || "Unbekannter Termin";
-            const start = entry.match(/DTSTART:(\d{8}T\d{6})/)?.[1];
+            const start = entry.match(/DTSTART:(\d{8})/)?.[1];
             if (start) {
-                const formattedDate = `${start.substring(0,4)}-${start.substring(4,6)}-${start.substring(6,8)}T${start.substring(9,11)}:${start.substring(11,13)}`;
+                const formattedDate = `${start.substring(0,4)}-${start.substring(4,6)}-${start.substring(6,8)}`;
                 events.push({ title, start: formattedDate });
             }
         });

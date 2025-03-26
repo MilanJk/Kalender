@@ -12,4 +12,16 @@
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="text-center">SimpleTask
+        <h1 class="text-center">SimpleTask 📅</h1>
+        <div class="input-group mb-3">
+            <input type="text" id="eventTitle" class="form-control" placeholder="Termin hinzufügen">
+            <input type="datetime-local" id="eventDate" class="form-control" placeholder="Datum und Uhrzeit auswählen">
+            <button class="btn btn-primary" onclick="calendarManager.addEvent()">Hinzufügen</button>
+        </div>
+        <div id='calendar'></div>
+        <div class="mt-3 text-center">
+            <button class="btn btn-success" onclick="calendarManager.importWebUntis()">WebUntis Kalender Importieren</button>
+        </div>
+    </div>
+</body>
+</html>
